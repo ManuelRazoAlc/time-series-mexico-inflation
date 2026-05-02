@@ -1,0 +1,25 @@
+Forecast Model Comparison Summary
+=================================
+
+Objective:
+Compare simple forecasting models for annual headline inflation in Mexico using Banxico monthly inflation data.
+
+Train/test split:
+- Training period: 2000-01-01 to 2020-12-01
+- Test period: 2021-01-01 to 2026-03-01
+
+Models compared:
+- Naive forecast: uses the previous month as the forecast.
+- 12-month moving average: uses the average of the previous 12 months.
+- Exponential smoothing: gives more weight to recent observations.
+
+Model performance:
+- Naive forecast: MAE = 0.316, RMSE = 0.421, MAPE = 6.11%
+- Exponential smoothing: MAE = 0.528, RMSE = 0.685, MAPE = 9.80%
+- 12-month moving average: MAE = 0.988, RMSE = 1.251, MAPE = 18.29%
+
+Best model by RMSE:
+- Naive forecast (RMSE = 0.421, MAE = 0.316)
+
+Interpretation note:
+Lower MAE and RMSE values indicate better forecast accuracy. RMSE penalizes larger errors more strongly than MAE, so it is useful when large forecast mistakes are especially important.

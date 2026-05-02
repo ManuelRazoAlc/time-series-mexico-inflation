@@ -1,0 +1,4 @@
+﻿series_id,series_name,series_title,start_date,end_date,download_date,api_url_without_token,observations,first_observation,last_observation
+SP30578,headline_inflation_annual,Índice Nacional de Precios al consumidor variación anual,2000-01-01,2026-04-30,2026-04-30,https://www.banxico.org.mx/SieAPIRest/service/v1/series/SP30578/datos/2000-01-01/2026-04-30,315,2000-01-01,2026-03-01
+SP74662,core_inflation_annual,Inflación Subyacente (nueva definición) Anual,2000-01-01,2026-04-30,2026-04-30,https://www.banxico.org.mx/SieAPIRest/service/v1/series/SP74662/datos/2000-01-01/2026-04-30,315,2000-01-01,2026-03-01
+SP74665,non_core_inflation_annual,Inflación No subyacente (nueva definición) Anual,2000-01-01,2026-04-30,2026-04-30,https://www.banxico.org.mx/SieAPIRest/service/v1/series/SP74665/datos/2000-01-01/2026-04-30,315,2000-01-01,2026-03-01

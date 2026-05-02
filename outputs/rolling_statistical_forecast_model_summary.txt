@@ -1,0 +1,30 @@
+Rolling Statistical Forecast Model Comparison Summary
+====================================================
+
+Objective:
+Compare formal time series forecasting models for annual headline inflation in Mexico using Banxico monthly inflation data.
+
+Evaluation design:
+Models are evaluated using a rolling one-step-ahead forecasting scheme. For each month in the test period, each model is fitted using all information available up to the previous month and then used to forecast the next month.
+
+Train/test split:
+- Initial training period: 2000-01-01 to 2020-12-01
+- Rolling test period: 2021-01-01 to 2026-03-01
+
+Models compared:
+- Naive forecast: uses the previous month as the forecast benchmark.
+- ARIMA(1,1,1): autoregressive integrated moving-average model.
+- SARIMA(1,1,1)(1,0,1,12): ARIMA model with seasonal components.
+- Holt-Winters: exponential smoothing with additive trend and seasonality.
+
+Model performance:
+- SARIMA(1,1,1)(1,0,1,12): MAE = 0.233, RMSE = 0.280, MAPE = 4.51%
+- ARIMA(1,1,1): MAE = 0.314, RMSE = 0.397, MAPE = 6.11%
+- Naive forecast: MAE = 0.316, RMSE = 0.421, MAPE = 6.11%
+- Holt-Winters: MAE = 0.331, RMSE = 0.436, MAPE = 6.42%
+
+Best model by RMSE:
+- SARIMA(1,1,1)(1,0,1,12) (RMSE = 0.280, MAE = 0.233)
+
+Interpretation note:
+The rolling design makes the comparison fairer than a static long-horizon forecast, because each model is updated as new observations become available. If the naive benchmark remains competitive, this indicates strong short-term persistence in annual headline inflation.
