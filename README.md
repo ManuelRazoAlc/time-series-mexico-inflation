@@ -1,176 +1,21 @@
-# Mexico Inflation Time Series Forecasting
+# Mexico inflation: time series and forecasting
 
-This project analyzes annual inflation in Mexico using monthly time series data from Banco de México's SIE API.
+A Python project where I download Mexico's monthly inflation from Banco de México's API, compare how its components behave, and test which model forecasts annual headline inflation best one month ahead.
 
-The objective is to compare headline, core and non-core inflation dynamics, and evaluate different short-term forecasting models for annual headline inflation.
+![Headline, core and non-core annual inflation](outputs/figures/inflation_components_time_series.png)
 
-The project includes data extraction from an API, data preparation, exploratory time series analysis, moving averages, volatility comparison, simple forecasting benchmarks and rolling one-step-ahead statistical forecasting.
+## The question
 
----
+How has annual inflation in Mexico moved since 2000, and which time series model gives the best short-term forecast of headline inflation?
 
-## Project overview
+## What I did
 
-This project focuses on three annual inflation series:
+- **Data from the API.** I pulled three monthly series from Banxico's SIE API, from January 2000 to March 2026: headline (`SP30578`), core (`SP74662`) and non-core (`SP74665`) annual inflation.
+- **Exploration.** Monthly changes, 3- and 12-month moving averages, volatility by component and the gap between headline inflation and each component.
+- **Benchmarks.** A naive forecast (last month's value), a 12-month moving average and simple exponential smoothing.
+- **Statistical models.** ARIMA(1,1,1), SARIMA(1,1,1)(1,0,1,12) and Holt-Winters, compared with a rolling one-step-ahead design: for every month from January 2021 to March 2026, each model is refitted with all the data up to the previous month and forecasts the next one.
 
-- Headline annual inflation
-- Core annual inflation
-- Non-core annual inflation
-
-The analysis answers the following question:
-
-> How has annual inflation in Mexico evolved over time, and which time series forecasting approach performs better for short-term headline inflation prediction?
-
----
-
-## Data source
-
-The data were obtained from Banco de México's Sistema de Información Económica (SIE) API.
-
-The project uses the following series:
-
-| Series ID | Description |
-|---|---|
-| `SP30578` | Headline annual inflation |
-| `SP74662` | Core annual inflation |
-| `SP74665` | Non-core annual inflation |
-
-The raw data are downloaded automatically using:
-
-```bash
-python3 scripts/01_download_banxico_data.py
-```
-
-Raw data are stored in:
-
-```text
-data/raw/banxico_inflation_series_long.csv
-data/raw/banxico_inflation_metadata.csv
-```
-
----
-
-## Repository structure
-
-```text
-time-series-mexico-inflation/
-├── data/
-│   ├── raw/
-│   └── processed/
-├── docs/
-├── outputs/
-│   ├── figures/
-│   ├── tables/
-│   └── inflation_forecast_interpretation.md
-├── scripts/
-├── README.md
-├── requirements.txt
-├── .gitignore
-└── LICENSE
-```
-
----
-
-## Methodology
-
-The workflow is divided into five main stages:
-
-1. Download inflation data from Banco de México's API.
-2. Prepare a monthly time series dataset.
-3. Explore headline, core and non-core inflation dynamics.
-4. Compare simple forecasting benchmarks.
-5. Evaluate statistical forecasting models using a rolling one-step-ahead design.
-
----
-
-## Main variables
-
-The processed dataset contains the following variables:
-
-| Variable | Description |
-|---|---|
-| `date` | Monthly observation date |
-| `headline` | Annual headline inflation rate |
-| `core` | Annual core inflation rate |
-| `non_core` | Annual non-core inflation rate |
-| `headline_change` | Monthly change in annual headline inflation |
-| `core_change` | Monthly change in annual core inflation |
-| `non_core_change` | Monthly change in annual non-core inflation |
-| `headline_ma_3` | 3-month moving average of headline inflation |
-| `headline_ma_12` | 12-month moving average of headline inflation |
-
----
-
-## Exploratory analysis
-
-The exploratory analysis compares the behavior of headline, core and non-core annual inflation.
-
-Main findings:
-
-- Core inflation is smoother and more persistent.
-- Non-core inflation is more volatile and shows larger swings.
-- Headline inflation is strongly related to core inflation, but short-term deviations are often associated with non-core movements.
-- Moving averages help distinguish short-term fluctuations from medium-term inflation trends.
-
----
-
-## Selected figures
-
-### Annual inflation components
-
-![Annual inflation components](outputs/figures/inflation_components_time_series.png)
-
-### Headline inflation and moving averages
-
-![Headline inflation moving averages](outputs/figures/headline_inflation_moving_averages.png)
-
-### Distribution of inflation components
-
-![Inflation components boxplot](outputs/figures/inflation_components_boxplot.png)
-
-### Gap between headline inflation and components
-
-![Inflation component gaps](outputs/figures/inflation_component_gaps.png)
-
----
-
-## Forecasting models
-
-The project compares simple benchmark models and formal statistical forecasting models.
-
-The final model comparison uses a rolling one-step-ahead forecasting design.
-
-For each month in the test period, each model is fitted using all information available up to the previous month and then used to forecast the next month.
-
-This design is more realistic than a static long-horizon forecast because the model is updated as new observations become available.
-
----
-
-## Models compared
-
-| Model | Description |
-|---|---|
-| Naive forecast | Uses the previous month as the forecast |
-| ARIMA(1,1,1) | Non-seasonal autoregressive integrated moving-average model |
-| SARIMA(1,1,1)(1,0,1,12) | Seasonal ARIMA model with annual monthly seasonality |
-| Holt-Winters | Exponential smoothing with trend and seasonality |
-
----
-
-## Forecast evaluation
-
-The models are evaluated using:
-
-| Metric | Interpretation |
-|---|---|
-| MAE | Average absolute forecast error |
-| RMSE | Forecast error metric that penalizes larger errors more strongly |
-| MAPE | Average percentage forecast error |
-
-Lower values indicate better forecasting performance.
-
----
-
-## Rolling forecast results
+## Results
 
 | Model | MAE | RMSE | MAPE |
 |---|---:|---:|---:|
@@ -179,74 +24,26 @@ Lower values indicate better forecasting performance.
 | Naive forecast | 0.316 | 0.421 | 6.11% |
 | Holt-Winters | 0.331 | 0.436 | 6.42% |
 
-The SARIMA model achieved the lowest forecast error across all three metrics.
+- Headline inflation is very persistent, so simply repeating last month's value is already a hard benchmark to beat.
+- SARIMA was the only model that clearly beat it, with the lowest error on all three metrics. The seasonal part adds information beyond persistence.
+- Core inflation is smoother; non-core is the most volatile component (standard deviation of 2.91 points against 1.68 for core), and it explains most short-term jumps in headline inflation.
 
-This suggests that incorporating seasonal structure improves short-term forecasting performance for annual headline inflation.
+![Rolling one-step-ahead forecasts in the test period](outputs/figures/rolling_statistical_forecasts_test_period.png)
 
----
+The models only use the history of inflation itself. They do not include exchange rates, interest rates, wages or energy prices, so this is a forecasting exercise, not a macroeconomic model.
 
-## Forecasting figures
+## How it is organized
 
-### Rolling forecast comparison
+- `scripts/01_download_banxico_data.py` to `scripts/05_statistical_forecasting_models.py`: the five steps, from download to the rolling forecast comparison. `scripts/00_search_banxico_inflation_series.py` is the helper I used to find the series IDs.
+- `data/`: raw API downloads and the processed monthly dataset.
+- `outputs/`: figures, tables and a written summary of the results ([`inflation_forecast_interpretation.md`](outputs/inflation_forecast_interpretation.md)).
 
-![Rolling statistical forecasts](outputs/figures/rolling_statistical_forecasts_test_period.png)
+## How to reproduce it
 
-### Forecast error comparison
+You need Python 3 and a free [Banxico SIE API token](https://www.banxico.org.mx/SieAPIRest/service/v1/token). Save it in a `.env` file at the project root as `BANXICO_TOKEN=your_token`, then run:
 
-![Rolling forecast error comparison](outputs/figures/rolling_statistical_forecast_error_comparison.png)
-
-### Forecast errors over time
-
-![Rolling forecast errors over time](outputs/figures/rolling_statistical_forecast_errors_over_time.png)
-
----
-
-## Key findings
-
-- Annual headline inflation in Mexico shows strong persistence over time.
-- Core inflation is smoother than non-core inflation.
-- Non-core inflation is the most volatile component.
-- The naive forecast is a strong short-term benchmark.
-- SARIMA outperformed ARIMA, Holt-Winters and the naive benchmark under a rolling one-step-ahead evaluation.
-- The rolling evaluation design provides a more realistic assessment of short-term forecasting performance.
-
----
-
-## Limitations
-
-This project focuses on univariate time series forecasting using inflation history only.
-
-The models do not include external explanatory variables such as interest rates, exchange rates, wages, energy prices or monetary policy indicators.
-
-Therefore, the results should be interpreted as a statistical forecasting exercise rather than a full macroeconomic forecasting system.
-
----
-
-## Possible extensions
-
-Future improvements could include:
-
-- SARIMAX models with exogenous variables
-- Forecasting core and non-core inflation separately
-- Automatic ARIMA order selection
-- Forecast intervals
-- Rolling evaluation with alternative training windows
-- Comparison with exchange rate, policy rate or energy price series
-- VAR models or machine learning forecasting models
-
----
-
-## How to reproduce
-
-Install the required packages:
-
-```bash
+```sh
 python3 -m pip install -r requirements.txt
-```
-
-Run the scripts in order:
-
-```bash
 python3 scripts/01_download_banxico_data.py
 python3 scripts/02_prepare_inflation_data.py
 python3 scripts/03_exploratory_analysis.py
@@ -254,54 +51,12 @@ python3 scripts/04_forecasting_models.py
 python3 scripts/05_statistical_forecasting_models.py
 ```
 
-The outputs will be saved in:
+The downloaded data are already in `data/`, so steps 2 to 5 also run without a token.
 
-```text
-outputs/figures/
-outputs/tables/
-```
+## Data source
 
----
-
-## Main outputs
-
-### Reports
-
-```text
-outputs/inflation_forecast_interpretation.md
-outputs/forecast_model_summary.txt
-outputs/rolling_statistical_forecast_model_summary.txt
-```
-
-### Processed data
-
-```text
-data/processed/inflation_monthly_processed.csv
-```
-
-### Forecast comparison table
-
-```text
-outputs/tables/rolling_statistical_forecast_model_comparison.csv
-```
+Banco de México, [Sistema de Información Económica (SIE)](https://www.banxico.org.mx/SieInternet/): annual inflation series `SP30578`, `SP74662` and `SP74665`.
 
 ---
 
-## Tools used
-
-- Python
-- pandas
-- NumPy
-- matplotlib
-- statsmodels
-- requests
-- python-dotenv
-- Banco de México SIE API
-- Git / GitHub
-
----
-
-## Author
-
-Manuel Razo Alcántara  
-Actuarial Science student, Facultad de Ciencias, UNAM
+Manuel Razo Alcántara · [LinkedIn](https://www.linkedin.com/in/manuel-razo-alcantara) · Code under the [MIT License](LICENSE)
